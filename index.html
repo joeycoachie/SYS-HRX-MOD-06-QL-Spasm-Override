@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movement OS | SYS-HRX-MOD-06 (Hip Hike Override)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #050505; 
+            color: #ffffff; 
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #333333; border-radius: 0; }
+        ::-webkit-scrollbar-thumb:hover { background: #555555; }
+        
+        .phase-content { display: none; }
+        .phase-content.active { display: block; animation: fadeIn 0.3s ease-in; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .clock-display { font-family: 'Courier New', Courier, monospace; letter-spacing: 0.1em; }
+        
+        /* RA OVERRIDE LOGIC */
+        .ra-module { display: none; }
+        body.ra-active .ra-module { 
+            display: block; 
+            animation: fadeIn 0.3s ease-in;
+        }
+        .ra-toggle-btn.active {
+            background-color: #1e3a8a; /* Deep muted blue */
+            border-color: #3b82f6;
+            color: #ffffff;
+        }
+        
+        /* Custom Checkbox (SYS-D022 Sharp Edges) */
+        input[type="checkbox"] {
+            appearance: none;
+            background-color: #050505;
+            margin: 0;
+            font: inherit;
+            color: currentColor;
+            width: 1.25em;
+            height: 1.25em;
+            border: 1px solid #333333;
+            display: grid;
+            place-content: center;
+            border-radius: 0;
+            flex-shrink: 0; /* Prevents text from pushing into the box */
+        }
+        input[type="checkbox"]::before {
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em white;
+            background-color: white;
+            transform-origin: center;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+        input[type="checkbox"]:checked::before { transform: scale(1); }
+    </style>
+</head>
+<body class="h-screen flex flex-col md:flex-row overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside class="w-full md:w-80 border-b md:border-b-0 md:border-r border-[#333333] bg-[#050505] p-8 flex flex-col overflow-y-auto">
+        <div class="mb-8 border-b border-[#333333] pb-6">
+            <span class="text-[10px] font-mono tracking-widest text-red-500 uppercase">SYS-HRX-MOD-06</span>
+            <h1 class="text-2xl text-white mt-1">QL Spasm Override</h1>
+            <p class="text-sm text-gray-400 mt-2">Ipsilateral Hip Hike / Nerve Impingement</p>
+        </div>
+
+        <div class="mb-8 border border-[#333333] bg-[#111111] p-6">
+            <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-4">Session Clock</h3>
+            <div id="timerDisplay" class="clock-display text-4xl text-white mb-6 text-center">00:00</div>
+            <div class="flex space-x-4">
+                <button id="startBtn" onclick="toggleTimer()" class="flex-1 border border-[#333333] bg-[#050505] hover:bg-[#222222] transition-colors py-2 text-sm font-semibold tracking-wide">START</button>
+                <button onclick="resetTimer()" class="flex-1 border border-[#333333] bg-[#050505] hover:bg-[#222222] transition-colors py-2 text-sm font-semibold tracking-wide text-gray-500">RESET</button>
+            </div>
+        </div>
+
+        <!-- GLOBAL OVERRIDES -->
+        <div class="mb-8 border border-[#333333] p-6 bg-[#0a0a0a]">
+            <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-4">Medical Overrides</h3>
+            <button id="raToggleBtn" onclick="toggleRA()" class="ra-toggle-btn w-full border border-[#333333] bg-[#111111] transition-colors py-3 text-sm font-semibold tracking-wide text-gray-400">
+                [ ] RA OVERRIDE
+            </button>
+        </div>
+
+        <nav class="flex-1 space-y-4" id="nav-menu">
+            <button onclick="switchPhase('week1')" class="nav-btn w-full text-left p-4 border border-[#333333] bg-[#111111] hover:border-gray-500 transition-colors active-nav">
+                <span class="text-xs text-gray-500 block mb-1">Passive Release</span>
+                <span class="font-semibold tracking-wide">WEEK 1: Decompress</span>
+            </button>
+            <button onclick="switchPhase('week2')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
+                <span class="text-xs text-gray-500 block mb-1">Active Load</span>
+                <span class="font-semibold tracking-wide">WEEK 2: Anchoring</span>
+            </button>
+            <button onclick="switchPhase('week3')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
+                <span class="text-xs text-gray-500 block mb-1">Impact Restore</span>
+                <span class="font-semibold tracking-wide">WEEK 3: Integration</span>
+            </button>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 bg-[#050505] p-8 md:p-16 overflow-y-auto" id="content-area">
+        
+        <!-- WEEK 1: DECOMPRESS -->
+        <div id="week1" class="phase-content active">
+            <div class="flex justify-between items-start mb-12">
+                <div>
+                    <h2 class="text-4xl mb-2">Week 1: Decompression & Glide</h2>
+                    <p class="text-gray-400 uppercase tracking-widest text-sm">Passive Lengthening & Neural Flossing</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="text-xl mb-6 text-gray-300">Execution Sequence</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-4">
+                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block A (Ladder Barrel):</strong> Passive Lateral Flexion. Right side facing ceiling. Deep side-bend over apex. Hold 90s. Breathe into right ribcage.</span>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block B (Wunda Chair):</strong> Static Pelvic Hold (Regression). Left foot on chair, right hovering. Hold 30s. Zero pelvic shift. NO STEPPING.</span>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block C (Reformer):</strong> Sciatic Glide. Single Leg Foot-in-Strap. Point toe at bottom of arc, flex hard toward shin at the top.</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="space-y-8">
+                    <div class="bg-[#111111] border border-[#333333] p-8">
+                        <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
+                        <p class="text-gray-200">Eccentrically lengthen the right Quadratus Lumborum before we ask the pelvis to bear weight. Restore glide to the sciatic tract without compressing the lumbar spine.</p>
+                    </div>
+                    <div class="bg-[#111111] border border-[#333333] p-8">
+                        <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Shepherd Cue</h3>
+                        <p class="text-gray-200 italic font-light">"Floss the nerve. Pull the silk thread smoothly through the back of your leg."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
+                <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Safety Gate (QA Fail)</h3>
+                <p class="text-red-200 text-lg">Client reports shooting/electrical pain or tingling during the Sciatic Glide, indicating severe nerve entrapment rather than tension.</p>
+            </div>
+            
+            <div class="ra-module border border-[#1e3a8a] bg-[#0a0f1c] p-8 mt-8 border-l-4 border-l-[#3b82f6]">
+                <h3 class="text-[#3b82f6] font-bold uppercase tracking-widest text-sm mb-4">RA OVERRIDE: WEEK 1</h3>
+                <p class="text-gray-200 text-sm">Ensure the Ladder Barrel passive stretch does not hyperextend the bottom side ribs/spine. Support the head with a block to avoid cervical strain.</p>
+            </div>
+        </div>
+
+        <!-- WEEK 2: ANCHORING -->
+        <div id="week2" class="phase-content">
+            <div class="flex justify-between items-start mb-12">
+                <div>
+                    <h2 class="text-4xl mb-2">Week 2: Isometric Anchoring</h2>
+                    <p class="text-gray-400 uppercase tracking-widest text-sm">Contralateral Load & Active Stability</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="text-xl mb-6 text-gray-300">Execution Sequence</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-4">
+                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block A (Ladder Barrel):</strong> Active Lateral Flexion. Lower over barrel, actively use QL/Oblique to return to neutral. No hyperextension.</span>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block B (Wunda Chair):</strong> Lateral Step-Downs. Left foot anchored on chair, right hovering. 1 Heavy Spring. Slowly lower right foot by bending left knee, drive up.</span>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block C (Reformer):</strong> Sciatic Glide + Core Anchor. Add contralateral tabletop leg while flossing the working leg in the strap.</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="space-y-8">
+                    <div class="bg-[#111111] border border-[#333333] p-8">
+                        <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
+                        <p class="text-gray-200">The pelvis must remain perfectly level on the Chair. If the right hip hikes on the way up, the left Gluteus Medius is failing and the QL is taking over.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
+                <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">CRITICAL Safety Gate (QA Fail)</h3>
+                <p class="text-red-200 text-lg">Visible right hip hiking during the upward phase of the Wunda Chair Step-Down. Immediate regression back to Week 1 isometric hold required.</p>
+            </div>
+
+            <div class="ra-module border border-[#1e3a8a] bg-[#0a0f1c] p-8 mt-8 border-l-4 border-l-[#3b82f6]">
+                <h3 class="text-[#3b82f6] font-bold uppercase tracking-widest text-sm mb-4">RA OVERRIDE: WEEK 2</h3>
+                <p class="text-gray-200 text-sm">Substitute Wunda Chair Step-Downs with Supine Bridging (unilateral if tolerated) to eliminate standing knee shear.</p>
+            </div>
+        </div>
+
+        <!-- WEEK 3: INTEGRATION -->
+        <div id="week3" class="phase-content">
+            <div class="flex justify-between items-start mb-12">
+                <div>
+                    <h2 class="text-4xl mb-2">Week 3: Dynamic Integration</h2>
+                    <p class="text-gray-400 uppercase tracking-widest text-sm">Impact Recovery & Rotational Load</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="text-xl mb-6 text-gray-300">Execution Sequence</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-4">
+                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block A (Ladder Barrel):</strong> Lateral Flexion to Rotation (Thread the Needle). Add transverse torque to the lengthened QL.</span>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block B (Wunda Chair):</strong> Lateral Step-Downs with offset Dumbbell. Contralateral load added to standing leg.</span>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block C (Reformer):</strong> Jumpboard (Light Spring). Reintroduce impact safely. Focus on mid-foot strike and rapid dorsiflexion recovery.</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="space-y-8">
+                    <div class="bg-[#111111] border border-[#333333] p-8">
+                        <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
+                        <p class="text-gray-200">The tendon/fascia has adapted. Now we train it to absorb shock and fire rapidly. On the Jumpboard, the ankle must decelerate the carriage, not the lower back.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
+                <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Safety Gate (QA Fail)</h3>
+                <p class="text-red-200 text-lg">Landing heavy on the heels during the Jumpboard sequence, sending percussive shockwaves straight up the sciatic tract into the lumbar spine.</p>
+            </div>
+
+            <div class="ra-module border border-[#1e3a8a] bg-[#0a0f1c] p-8 mt-8 border-l-4 border-l-[#3b82f6]">
+                <h3 class="text-[#3b82f6] font-bold uppercase tracking-widest text-sm mb-4">RA OVERRIDE: WEEK 3</h3>
+                <p class="text-gray-200 text-sm">Jumping is strictly contraindicated. Remove Jumpboard. Perform rapid, light-spring footwork (continuous pumping) to achieve muscular taxation without joint impact.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Phase Switching
+        function switchPhase(phaseId) {
+            document.querySelectorAll('.phase-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(phaseId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-[#111111]'));
+            event.currentTarget.classList.add('bg-[#111111]');
+        }
+
+        // RA Override Toggle
+        let isRaActive = false;
+        function toggleRA() {
+            const btn = document.getElementById('raToggleBtn');
+            isRaActive = !isRaActive;
+            
+            if(isRaActive) {
+                document.body.classList.add('ra-active');
+                btn.classList.add('active');
+                btn.innerText = '[X] RA OVERRIDE ACTIVE';
+            } else {
+                document.body.classList.remove('ra-active');
+                btn.classList.remove('active');
+                btn.innerText = '[ ] RA OVERRIDE';
+            }
+        }
+
+        // Flow Timer Logic (Count UP)
+        let timerInterval;
+        let seconds = 0;
+        let isRunning = false;
+
+        function updateDisplay() {
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('startBtn');
+            if (isRunning) {
+                clearInterval(timerInterval);
+                btn.innerText = 'RESUME';
+                btn.classList.replace('text-red-500', 'text-white');
+            } else {
+                timerInterval = setInterval(() => {
+                    seconds++;
+                    updateDisplay();
+                }, 1000);
+                btn.innerText = 'PAUSE';
+                btn.classList.add('text-red-500');
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            seconds = 0;
+            isRunning = false;
+            updateDisplay();
+            const btn = document.getElementById('startBtn');
+            btn.innerText = 'START';
+            btn.classList.remove('text-red-500');
+            btn.classList.add('text-white');
+        }
+    </script>
+</body>
+</html>
+```eof
