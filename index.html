@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movement OS | SYS-HRX-MOD-06 (Hip Hike Override)</title>
+    <title>Movement OS | KIN-015 (QL & Nerve Protocol)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap');
@@ -38,9 +38,22 @@
             animation: fadeIn 0.3s ease-in;
         }
         .ra-toggle-btn.active {
-            background-color: #1e3a8a; /* Deep muted blue */
+            background-color: #1e3a8a; 
             border-color: #3b82f6;
             color: #ffffff;
+        }
+
+        /* WEEK TOGGLE STYLES */
+        .week-btn {
+            background-color: #050505;
+            color: #71717a;
+            border: 1px solid #333333;
+            transition: all 0.2s ease;
+        }
+        .week-btn.active {
+            background-color: #111111;
+            color: #ffffff;
+            border-color: #00e5ff;
         }
         
         /* Custom Checkbox (SYS-D022 Sharp Edges) */
@@ -74,16 +87,24 @@
 </head>
 <body class="h-screen flex flex-col md:flex-row overflow-hidden">
 
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR: Navigation & Clock -->
     <aside class="w-full md:w-80 border-b md:border-b-0 md:border-r border-[#333333] bg-[#050505] p-8 flex flex-col overflow-y-auto">
-        <div class="mb-8 border-b border-[#333333] pb-6">
-            <span class="text-[10px] font-mono tracking-widest text-red-500 uppercase">SYS-HRX-MOD-06</span>
-            <h1 class="text-2xl text-white mt-1">QL Spasm Override</h1>
-            <p class="text-sm text-gray-400 mt-2">Ipsilateral Hip Hike / Nerve Impingement</p>
+        <div class="mb-8">
+            <p class="text-xs tracking-widest text-[#00e5ff] font-bold uppercase mb-2">Protocol</p>
+            <h1 class="text-2xl text-white">KIN-015_QL</h1>
+            <p class="text-sm text-gray-400 mt-2">Nerve Impingement & QL Spasm</p>
         </div>
 
+        <!-- WEEK TOGGLE -->
+        <div class="mb-8 grid grid-cols-3 gap-2">
+            <button onclick="switchWeek('week1')" id="btn-week1" class="week-btn active py-2 text-[10px] font-bold tracking-widest uppercase">Wk 1</button>
+            <button onclick="switchWeek('week2')" id="btn-week2" class="week-btn py-2 text-[10px] font-bold tracking-widest uppercase">Wk 2</button>
+            <button onclick="switchWeek('week3')" id="btn-week3" class="week-btn py-2 text-[10px] font-bold tracking-widest uppercase">Wk 3</button>
+        </div>
+
+        <!-- SESSION CLOCK MODULE -->
         <div class="mb-8 border border-[#333333] bg-[#111111] p-6">
-            <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-4">Session Clock</h3>
+            <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-4">Flow Clock</h3>
             <div id="timerDisplay" class="clock-display text-4xl text-white mb-6 text-center">00:00</div>
             <div class="flex space-x-4">
                 <button id="startBtn" onclick="toggleTimer()" class="flex-1 border border-[#333333] bg-[#050505] hover:bg-[#222222] transition-colors py-2 text-sm font-semibold tracking-wide">START</button>
@@ -100,17 +121,21 @@
         </div>
 
         <nav class="flex-1 space-y-4" id="nav-menu">
-            <button onclick="switchPhase('week1')" class="nav-btn w-full text-left p-4 border border-[#333333] bg-[#111111] hover:border-gray-500 transition-colors active-nav">
-                <span class="text-xs text-gray-500 block mb-1">Passive Release</span>
-                <span class="font-semibold tracking-wide">WEEK 1: Decompress</span>
+            <button onclick="switchPhase('primer')" id="nav-primer" class="nav-btn w-full text-left p-4 border border-[#333333] bg-[#111111] hover:border-gray-500 transition-colors active-nav">
+                <span class="text-xs text-gray-500 block mb-1">Preparation</span>
+                <span class="font-semibold tracking-wide">1. Primer</span>
             </button>
-            <button onclick="switchPhase('week2')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
-                <span class="text-xs text-gray-500 block mb-1">Active Load</span>
-                <span class="font-semibold tracking-wide">WEEK 2: Anchoring</span>
+            <button onclick="switchPhase('anchor')" id="nav-anchor" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
+                <span class="text-xs text-gray-500 block mb-1">Stability</span>
+                <span class="font-semibold tracking-wide">2. Anchor</span>
             </button>
-            <button onclick="switchPhase('week3')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
-                <span class="text-xs text-gray-500 block mb-1">Impact Restore</span>
-                <span class="font-semibold tracking-wide">WEEK 3: Integration</span>
+            <button onclick="switchPhase('crucible')" id="nav-crucible" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
+                <span class="text-xs text-gray-500 block mb-1">Pathology Focus</span>
+                <span class="font-semibold tracking-wide">3. Crucible</span>
+            </button>
+            <button onclick="switchPhase('unwind')" id="nav-unwind" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
+                <span class="text-xs text-gray-500 block mb-1">Decompression</span>
+                <span class="font-semibold tracking-wide">4. Unwind</span>
             </button>
         </nav>
     </aside>
@@ -118,161 +143,280 @@
     <!-- MAIN CONTENT AREA -->
     <main class="flex-1 bg-[#050505] p-8 md:p-16 overflow-y-auto" id="content-area">
         
-        <!-- WEEK 1: DECOMPRESS -->
-        <div id="week1" class="phase-content active">
-            <div class="flex justify-between items-start mb-12">
-                <div>
-                    <h2 class="text-4xl mb-2">Week 1: Decompression & Glide</h2>
-                    <p class="text-gray-400 uppercase tracking-widest text-sm">Passive Lengthening & Neural Flossing</p>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="text-xl mb-6 text-gray-300">Execution Sequence</h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-4">
-                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block A (Ladder Barrel):</strong> Passive Lateral Flexion. Right side facing ceiling. Deep side-bend over apex. Hold 90s. Breathe into right ribcage.</span>
-                        </li>
-                        <li class="flex items-start gap-4">
-                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block B (Wunda Chair):</strong> Static Pelvic Hold (Regression). Left foot on chair, right hovering. Hold 30s. Zero pelvic shift. NO STEPPING.</span>
-                        </li>
-                        <li class="flex items-start gap-4">
-                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block C (Reformer):</strong> Sciatic Glide. Single Leg Foot-in-Strap. Point toe at bottom of arc, flex hard toward shin at the top.</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="space-y-8">
-                    <div class="bg-[#111111] border border-[#333333] p-8">
-                        <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
-                        <p class="text-gray-200">Eccentrically lengthen the right Quadratus Lumborum before we ask the pelvis to bear weight. Restore glide to the sciatic tract without compressing the lumbar spine.</p>
-                    </div>
-                    <div class="bg-[#111111] border border-[#333333] p-8">
-                        <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Shepherd Cue</h3>
-                        <p class="text-gray-200 italic font-light">"Floss the nerve. Pull the silk thread smoothly through the back of your leg."</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
-                <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Safety Gate (QA Fail)</h3>
-                <p class="text-red-200 text-lg">Client reports shooting/electrical pain or tingling during the Sciatic Glide, indicating severe nerve entrapment rather than tension.</p>
-            </div>
-            
-            <div class="ra-module border border-[#1e3a8a] bg-[#0a0f1c] p-8 mt-8 border-l-4 border-l-[#3b82f6]">
-                <h3 class="text-[#3b82f6] font-bold uppercase tracking-widest text-sm mb-4">RA OVERRIDE: WEEK 1</h3>
-                <p class="text-gray-200 text-sm">Ensure the Ladder Barrel passive stretch does not hyperextend the bottom side ribs/spine. Support the head with a block to avoid cervical strain.</p>
-            </div>
-        </div>
-
-        <!-- WEEK 2: ANCHORING -->
-        <div id="week2" class="phase-content">
-            <div class="flex justify-between items-start mb-12">
-                <div>
-                    <h2 class="text-4xl mb-2">Week 2: Isometric Anchoring</h2>
-                    <p class="text-gray-400 uppercase tracking-widest text-sm">Contralateral Load & Active Stability</p>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="text-xl mb-6 text-gray-300">Execution Sequence</h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-4">
-                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block A (Ladder Barrel):</strong> Active Lateral Flexion. Lower over barrel, actively use QL/Oblique to return to neutral. No hyperextension.</span>
-                        </li>
-                        <li class="flex items-start gap-4">
-                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block B (Wunda Chair):</strong> Lateral Step-Downs. Left foot anchored on chair, right hovering. 1 Heavy Spring. Slowly lower right foot by bending left knee, drive up.</span>
-                        </li>
-                        <li class="flex items-start gap-4">
-                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block C (Reformer):</strong> Sciatic Glide + Core Anchor. Add contralateral tabletop leg while flossing the working leg in the strap.</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="space-y-8">
-                    <div class="bg-[#111111] border border-[#333333] p-8">
-                        <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
-                        <p class="text-gray-200">The pelvis must remain perfectly level on the Chair. If the right hip hikes on the way up, the left Gluteus Medius is failing and the QL is taking over.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
-                <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">CRITICAL Safety Gate (QA Fail)</h3>
-                <p class="text-red-200 text-lg">Visible right hip hiking during the upward phase of the Wunda Chair Step-Down. Immediate regression back to Week 1 isometric hold required.</p>
-            </div>
-
-            <div class="ra-module border border-[#1e3a8a] bg-[#0a0f1c] p-8 mt-8 border-l-4 border-l-[#3b82f6]">
-                <h3 class="text-[#3b82f6] font-bold uppercase tracking-widest text-sm mb-4">RA OVERRIDE: WEEK 2</h3>
-                <p class="text-gray-200 text-sm">Substitute Wunda Chair Step-Downs with Supine Bridging (unilateral if tolerated) to eliminate standing knee shear.</p>
-            </div>
-        </div>
-
-        <!-- WEEK 3: INTEGRATION -->
-        <div id="week3" class="phase-content">
-            <div class="flex justify-between items-start mb-12">
-                <div>
-                    <h2 class="text-4xl mb-2">Week 3: Dynamic Integration</h2>
-                    <p class="text-gray-400 uppercase tracking-widest text-sm">Impact Recovery & Rotational Load</p>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="text-xl mb-6 text-gray-300">Execution Sequence</h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-4">
-                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block A (Ladder Barrel):</strong> Lateral Flexion to Rotation (Thread the Needle). Add transverse torque to the lengthened QL.</span>
-                        </li>
-                        <li class="flex items-start gap-4">
-                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block B (Wunda Chair):</strong> Lateral Step-Downs with offset Dumbbell. Contralateral load added to standing leg.</span>
-                        </li>
-                        <li class="flex items-start gap-4">
-                            <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed block"><strong class="text-white">Block C (Reformer):</strong> Jumpboard (Light Spring). Reintroduce impact safely. Focus on mid-foot strike and rapid dorsiflexion recovery.</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="space-y-8">
-                    <div class="bg-[#111111] border border-[#333333] p-8">
-                        <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
-                        <p class="text-gray-200">The tendon/fascia has adapted. Now we train it to absorb shock and fire rapidly. On the Jumpboard, the ankle must decelerate the carriage, not the lower back.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
-                <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Safety Gate (QA Fail)</h3>
-                <p class="text-red-200 text-lg">Landing heavy on the heels during the Jumpboard sequence, sending percussive shockwaves straight up the sciatic tract into the lumbar spine.</p>
-            </div>
-
-            <div class="ra-module border border-[#1e3a8a] bg-[#0a0f1c] p-8 mt-8 border-l-4 border-l-[#3b82f6]">
-                <h3 class="text-[#3b82f6] font-bold uppercase tracking-widest text-sm mb-4">RA OVERRIDE: WEEK 3</h3>
-                <p class="text-gray-200 text-sm">Jumping is strictly contraindicated. Remove Jumpboard. Perform rapid, light-spring footwork (continuous pumping) to achieve muscular taxation without joint impact.</p>
-            </div>
+        <!-- PHASE TEMPLATE -->
+        <div id="dynamic-phase-content" class="phase-content active">
+            <!-- Injected via JS -->
         </div>
 
     </main>
 
     <script>
-        // Phase Switching
-        function switchPhase(phaseId) {
-            document.querySelectorAll('.phase-content').forEach(el => el.classList.remove('active'));
-            document.getElementById(phaseId).classList.add('active');
+        // DATA MATRIX: 3 Weeks x 4 Phases
+        const protocolData = {
+            week1: {
+                primer: {
+                    title: "The Primer (Spinal Baseline)",
+                    sub: "Mat: Pelvic Clocks & Diaphragmatic Breath",
+                    tools: "Mat",
+                    steps: [
+                        "Supine on mat. Knees bent.",
+                        "Subtle anterior and posterior pelvic tilts to find Neutral.",
+                        "Deep lateral rib breathing to disengage scalenes/neck."
+                    ],
+                    wolf: "Assess the resting tone of the lumbar spine. We cannot load the system until the parasympathetic state is activated and the pelvis is unlocked.",
+                    shepherd: "Imagine a bowl of water resting on your pelvis. Gently tip water out the front, then out the back. Find the quiet center.",
+                    safety: "Ribs flaring aggressively off the mat on the inhale, indicating severe diaphragmatic locking.",
+                    raMod: "Ensure cervical spine is supported with a small pad if FHP (Forward Head Posture) strains the neck."
+                },
+                anchor: {
+                    title: "The Anchor (Neurological Decompression)",
+                    sub: "Ladder Barrel: Passive Lateral Flexion",
+                    tools: "Ladder Barrel",
+                    steps: [
+                        "Right side facing the ceiling. Feet anchored securely on the rungs.",
+                        "Deep, passive side-bend over the barrel apex.",
+                        "Hold for 90 seconds. Breathe laterally into the right ribcage to expand the intercostals."
+                    ],
+                    wolf: "We must eccentrically lengthen the right Quadratus Lumborum before we ask the pelvis to bear weight. Gravity is the only load here.",
+                    shepherd: "Melt over the barrel like warm wax. Send every breath into the right side of your ribs to stretch from the inside out.",
+                    safety: "Rotating the pelvis forward or backward to fake the stretch; must stay strictly in the coronal plane.",
+                    raMod: "If gripping the rung is painful, use a soft strap or forearm hook to secure the lower body."
+                },
+                crucible: {
+                    title: "The Crucible (Sciatic Glide)",
+                    sub: "Reformer: Single Leg Foot-in-Strap Dorsiflexion",
+                    tools: "Reformer (1 Medium Spring)",
+                    steps: [
+                        "Supine on Reformer. Single strap on right foot.",
+                        "Standard hamstring stretch arc.",
+                        "CRITICAL ADDITION: Point the toe at the bottom of the arc. Flex the toe hard toward the shin at the very top of the arc."
+                    ],
+                    wolf: "This is Neural Flossing. This restores the glide to the sciatic tract without compressing the lumbar spine. Active ankle articulation drives the nerve glide.",
+                    shepherd: "Floss the nerve. Draw a massive arc with your heel, then slice through the air with your toes.",
+                    safety: "Lifting the sacrum/tailbone off the mat during the upward arc (breaking the lumbopelvic anchor).",
+                    raMod: "Substitute single leg strap for bilateral straps if unilateral loading triggers SI joint instability."
+                },
+                unwind: {
+                    title: "The Unwind (Passive Traction)",
+                    sub: "Cadillac: Supported Supine Leg Springs",
+                    tools: "Cadillac (Light Leg Springs)",
+                    steps: [
+                        "Supine, feet in light leg springs.",
+                        "Allow the springs to gently traction the femurs out of the acetabulum.",
+                        "Micro-bend knees to protect the joint capsule."
+                    ],
+                    wolf: "Total structural offloading. The hardware assumes the weight of the limbs to allow the QL to completely switch off.",
+                    shepherd: "Let the springs pull the weight of the world out of your hips.",
+                    safety: "Forcing the knees perfectly straight if the hamstrings begin to violently shake/spasm.",
+                    raMod: "None needed. Passive supine traction is S-Rank safe for RA."
+                }
+            },
+            week2: {
+                primer: {
+                    title: "The Primer (Anti-Rotation)",
+                    sub: "Mat: Quadruped Bird-Dog",
+                    tools: "Mat",
+                    steps: [
+                        "Quadruped position. Knees under hips, hands under shoulders.",
+                        "Extend opposite arm and leg simultaneously.",
+                        "Hold for 3 seconds. Focus on resisting rotational shear."
+                    ],
+                    wolf: "Engaging the oblique slings across the posterior chain to ensure they can stabilize the pelvis before vertical loading.",
+                    shepherd: "Balance a hot cup of coffee on your lower back. Do not spill a drop as your limbs move.",
+                    safety: "Massive lateral weight shift or lumbar sagging (hyper-extension).",
+                    raMod: "Drop to forearms to protect wrists. Tap legs back only (no arm lift)."
+                },
+                anchor: {
+                    title: "The Anchor (Active Elongation)",
+                    sub: "Reformer: Eve's Lunge (Supported)",
+                    tools: "Reformer (Heavy Springs)",
+                    steps: [
+                        "Kneeling on carriage, front foot on floor/bar.",
+                        "Deep, supported lunge. Active glute engagement on the pushing leg.",
+                        "Maintain square ASIS headlights."
+                    ],
+                    wolf: "Active stretching of the hip flexor complex to prevent it from pulling the pelvis into an anterior tilt.",
+                    shepherd: "Drop your hips straight down an elevator shaft. Keep your chest proud to the wall.",
+                    safety: "Dumping into the lumbar spine (arching the back) to simulate a deeper hip stretch.",
+                    raMod: "Use a padded box under the back knee if patella pressure causes pain."
+                },
+                crucible: {
+                    title: "The Crucible (Isometric Anchoring)",
+                    sub: "Wunda Chair: Contralateral Lateral Step-Downs",
+                    tools: "Wunda Chair (1 Heavy Spring)",
+                    steps: [
+                        "Left foot securely on top of the chair. Right foot hovering off the side.",
+                        "Slowly lower the right foot toward the floor by bending the left knee.",
+                        "Drive up explosively, maintaining pelvic level."
+                    ],
+                    wolf: "The Iron Skeleton Mandate: The pelvis must remain perfectly level. If the right hip hikes on the way up, the left Gluteus Medius is failing to anchor.",
+                    shepherd: "Your waistbands stay perfectly horizontal. Push the chair into the floor to grow taller.",
+                    safety: "Right hip hiking aggressively during the concentric phase (upward drive).",
+                    raMod: "Hold a dowel or wall for balance to reduce neuromuscular overload. Reduce depth of step-down."
+                },
+                unwind: {
+                    title: "The Unwind (Lateral Integration)",
+                    sub: "Reformer: Box Mermaid",
+                    tools: "Reformer (1 Light Spring)",
+                    steps: [
+                        "Sitting on Short Box. Hand on footbar.",
+                        "Push carriage out, moving into deep lateral flexion.",
+                        "Keep opposite sit-bone glued to the box."
+                    ],
+                    wolf: "Actively stretching the lateral line while the core manages the return phase. Re-integrating the QL into movement.",
+                    shepherd: "Paint a massive rainbow over your head. Keep your hips heavy like lead weights.",
+                    safety: "Lifting the off-side sit-bone to artificially increase range of motion.",
+                    raMod: "Substitute with Mat Mermaid to eliminate the pushing/wrist load of the footbar."
+                }
+            },
+            week3: {
+                primer: {
+                    title: "The Primer (Bilateral Load)",
+                    sub: "Reformer: Parallel Footwork",
+                    tools: "Reformer (3 Red 1 Blue)",
+                    steps: [
+                        "Parallel arches and heels.",
+                        "Focus entirely on symmetric load distribution.",
+                        "Track patella exactly over 2nd toe."
+                    ],
+                    wolf: "Assessing if the QL release from Weeks 1 & 2 translates to symmetrical bilateral pressing power.",
+                    shepherd: "Push the wall away with perfectly even force. Ride train tracks.",
+                    safety: "One knee caving in (valgus) or hips shifting laterally under heavy spring load.",
+                    raMod: "Use lighter springs (2 Red) to reduce joint compression through the knee/hip complex."
+                },
+                anchor: {
+                    title: "The Anchor (Dynamic Stability)",
+                    sub: "Chair: Forward Step-Ups",
+                    tools: "Wunda Chair (1 Heavy 1 Light)",
+                    steps: [
+                        "Facing chair. Right foot on pedal, left foot on top.",
+                        "Shift weight forward and drive up to standing on the chair.",
+                        "Slow, 4-second eccentric descent."
+                    ],
+                    wolf: "Dynamic vertical load. Forcing the deep longitudinal line to fire sequentially without QL spasms.",
+                    shepherd: "Control the descent. Land as quietly as a ninja.",
+                    safety: "Crashing down onto the pedal, indicating massive eccentric failure of the glute max.",
+                    raMod: "Substitute with floor-based dynamic split squats holding a wall for support."
+                },
+                crucible: {
+                    title: "The Crucible (Dynamic Integration)",
+                    sub: "Reformer: Jumpboard (Light Spring)",
+                    tools: "Reformer (1 Red Spring) + Jumpboard",
+                    steps: [
+                        "Light spring tension to prolong air time.",
+                        "Parallel jumps, transitioning to alternating single-leg bounds.",
+                        "Focus on mid-foot strike and rapid dorsiflexion recovery in the air."
+                    ],
+                    wolf: "Reintroducing impact safely. The light spring forces the core to decelerate the carriage, testing the nerve glide mechanics under plyometric stress.",
+                    shepherd: "Roll through the foot like a tire. Toe, ball, heel. Silent landings.",
+                    safety: "Landing flat-footed or locking the knees mid-air, driving shockwaves into the lumbar spine.",
+                    raMod: "STRICTLY CONTRAINDICATED. Remove Jumpboard immediately. Perform rapid, unweighted footwork instead."
+                },
+                unwind: {
+                    title: "The Unwind (Global Release)",
+                    sub: "Cadillac: Push-Through Forward Flexion",
+                    tools: "Cadillac (Top Sprung PT Bar)",
+                    steps: [
+                        "Seated facing the tower. Hands on PT bar.",
+                        "Articulate spine forward, letting bar pull shoulders forward.",
+                        "Stack back up bone by bone."
+                    ],
+                    wolf: "Global decompression of the superficial back line. Restoring final parasympathetic tone.",
+                    shepherd: "Dive over a massive beach ball, letting the bar do the reaching for you.",
+                    safety: "Hinging at the hips with a flat back instead of curving the spine.",
+                    raMod: "Use flat palms on the bar instead of wrapping fingers if grip is inflamed."
+                }
+            }
+        };
+
+        let currentWeek = 'week1';
+        let currentPhase = 'primer';
+
+        function switchWeek(weekKey) {
+            currentWeek = weekKey;
             
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-[#111111]'));
-            event.currentTarget.classList.add('bg-[#111111]');
+            // Update Week Buttons
+            document.querySelectorAll('.week-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + weekKey).classList.add('active');
+            
+            // Re-render current phase
+            renderPhaseContent();
         }
 
-        // RA Override Toggle
+        function switchPhase(phaseKey) {
+            currentPhase = phaseKey;
+            
+            // Update Nav Buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-[#111111]'));
+            document.getElementById('nav-' + phaseKey).classList.add('bg-[#111111]');
+            
+            // Render content
+            renderPhaseContent();
+        }
+
+        function renderPhaseContent() {
+            const data = protocolData[currentWeek][currentPhase];
+            const container = document.getElementById('dynamic-phase-content');
+            
+            let stepsHtml = '';
+            data.steps.forEach(step => {
+                stepsHtml += `
+                    <li class="flex items-start gap-4">
+                        <input type="checkbox" class="mt-1 shrink-0 cursor-pointer">
+                        <span class="text-gray-300 leading-relaxed block">${step}</span>
+                    </li>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="flex justify-between items-start mb-12">
+                    <div>
+                        <h2 class="text-4xl mb-2">${data.title}</h2>
+                        <p class="text-gray-400 uppercase tracking-widest text-sm">${data.sub}</p>
+                    </div>
+                    <div class="border border-[#333333] px-6 py-3 bg-[#111111] text-right">
+                        <span class="text-xs text-gray-500 uppercase tracking-widest block mb-1">Apparatus</span>
+                        <span class="font-semibold text-white">${data.tools}</span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-[#111111] border border-[#333333] p-8">
+                        <h3 class="text-xl mb-6 text-gray-300">Execution Steps</h3>
+                        <ul class="space-y-4">
+                            ${stepsHtml}
+                        </ul>
+                    </div>
+                    <div class="space-y-8">
+                        <div class="bg-[#111111] border border-[#333333] p-8">
+                            <h3 class="text-sm uppercase tracking-widest text-[#00e5ff] mb-2 font-bold">The Wolf Cue (Biomechanical)</h3>
+                            <p class="text-gray-200 leading-relaxed">${data.wolf}</p>
+                        </div>
+                        <div class="bg-[#111111] border border-[#333333] p-8">
+                            <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Shepherd Cue (Imagery)</h3>
+                            <p class="text-gray-200 italic font-light">"${data.shepherd}"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
+                    <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Safety Gate (QA Fail)</h3>
+                    <p class="text-red-200 text-lg">${data.safety}</p>
+                </div>
+
+                <div class="ra-module border border-[#1e3a8a] bg-[#0a0f1c] p-8 mt-8 border-l-4 border-l-[#3b82f6]">
+                    <h3 class="text-[#3b82f6] font-bold uppercase tracking-widest text-sm mb-4">RA OVERRIDE: ${data.title.split(' ')[1]}</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <span class="text-xs text-gray-400 uppercase tracking-widest block mb-1">Execution Mod</span>
+                            <p class="text-gray-200 text-sm">${data.raMod}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // RA Override Toggle Logic
         let isRaActive = false;
         function toggleRA() {
             const btn = document.getElementById('raToggleBtn');
@@ -289,7 +433,7 @@
             }
         }
 
-        // Flow Timer Logic (Count UP)
+        // Timer Logic
         let timerInterval;
         let seconds = 0;
         let isRunning = false;
@@ -327,7 +471,9 @@
             btn.classList.remove('text-red-500');
             btn.classList.add('text-white');
         }
+
+        // Init
+        renderPhaseContent();
     </script>
 </body>
 </html>
-```eof
